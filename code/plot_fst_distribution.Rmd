@@ -1,0 +1,162 @@
+---
+title: "FST Distribution Plots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+# 1. plot simulated FST distribution for chrX_6_pop
+```{r}
+# Load data
+fst_chrX <- read.table("../data/fst_chrX_6_pop.txt", header=FALSE)
+fst_chrX_doublesize <- read.table("../data/fst_chrX_6_pop.txt.doublesize", header=FALSE)
+
+# Combine data into a single data frame
+fst_data_chrX <- data.frame(
+  FST = c(fst_chrX$V1, fst_chrX_doublesize$V1),
+  Version = rep(c("Reynolds sample size", "Double sample size"), each=nrow(fst_chrX))
+)
+
+# Calculate top percentiles
+percentiles_chrX <- fst_data_chrX %>%
+  group_by(Version) %>%
+  summarize(
+    p90 = quantile(FST, 0.90),
+    p95 = quantile(FST, 0.95)
+  )
+
+# plot
+ggplot(fst_data_chrX, aes(x=FST, fill=Version)) +
+    geom_density(alpha=0.5) +
+    geom_vline(data=percentiles_chrX, aes(xintercept=p90, color=Version, linetype="90th Percentile"), size=1) +
+    geom_vline(data=percentiles_chrX, aes(xintercept=p95, color=Version, linetype="95th Percentile"), size=1) +
+    scale_linetype_manual(name = "Percentiles", values = c("90th Percentile" = "dashed", "95th Percentile" = "dotted")) +
+    labs(title="FST Distribution for Chromosome X", x="FST", y="Density") +
+    theme_minimal() +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.ticks = element_line(size = 0.75),       # Add axis ticks
+    axis.ticks.length = unit(0.25, "cm"),         # Adjust tick length
+    axis.line = element_line(size = 0.75, color = "black") # Add axis lines
+  )
+
+# save the plot
+ggsave("../data/fst_distribution_fst_chrX_6_pop.png", width=6, height=4, dpi=300)
+```
+
+
+# 1. define a function to plot FST distribution
+```{r}
+plot_fst_distribution <- function(chrom_model) {
+  # Load data
+  fst_file <- paste0("../data/fst_", chrom_model, "_testlargesample.txt")
+  fst_doublesize_file <- paste0("../data/fst_", chrom_model, "_testlargesample.txt.doublesize")
+  
+  fst_data <- read.table(fst_file, header=FALSE)
+  fst_doublesize_data <- read.table(fst_doublesize_file, header=FALSE)
+  
+  # Combine data into a single data frame
+  fst_data_combined <- data.frame(
+    FST = c(fst_data$V1, fst_doublesize_data$V1),
+    Version = rep(c("Reynolds sample size", "Double sample size"), each=nrow(fst_data))
+  )
+  
+  # Calculate top percentiles
+  percentiles <- fst_data_combined %>%
+    group_by(Version) %>%
+    summarize(
+      p90 = quantile(FST, 0.90),
+      p95 = quantile(FST, 0.95)
+    )
+  
+  # Plot
+  p <- ggplot(fst_data_combined, aes(x=FST, fill=Version)) +
+    geom_density(alpha=0.5) +
+    geom_vline(data=percentiles, aes(xintercept=p90, color=Version, linetype="90th Percentile"), size=1) +
+    geom_vline(data=percentiles, aes(xintercept=p95, color=Version, linetype="95th Percentile"), size=1) +
+    scale_linetype_manual(name = "Percentiles", values = c("90th Percentile" = "dashed", "95th Percentile" = "dotted")) +
+    labs(title=paste("FST Distribution for", chrom_model), x="FST", y="Density") +
+    theme_minimal() +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks = element_line(size = 0.75),       # Add axis ticks
+      axis.ticks.length = unit(0.25, "cm"),         # Adjust tick length
+      axis.line = element_line(size = 0.75, color = "black") # Add axis lines
+    )
+  
+  # Save the plot
+  ggsave(paste0("../data/fst_distribution_", chrom_model, "_testlargesample.png"), plot = p, width=6, height=4, dpi=300)
+  return(p)
+}
+```
+
+# 2. plot FST distribution
+```{r}
+# Plot for Chromosome X
+plot_fst_distribution("chrX_6_pop")
+
+# Plot for Chromosome 2R
+plot_fst_distribution("chr2R_5_pop")
+
+# Plot for Chromosome 3L
+plot_fst_distribution("chr3L_6_pop")
+```
+
+
+# 1. define a function to plot FST distribution
+```{r}
+plot_fst_distribution <- function(chrom_model) {
+  # Load data
+  fst_file <- paste0("../data/fst_", chrom_model, ".txt")
+  fst_doublesize_file <- paste0("../data/fst_", chrom_model, ".txt.doublesize")
+  
+  fst_data <- read.table(fst_file, header=FALSE)
+  fst_doublesize_data <- read.table(fst_doublesize_file, header=FALSE)
+  
+  # Combine data into a single data frame
+  fst_data_combined <- data.frame(
+    FST = c(fst_data$V1, fst_doublesize_data$V1),
+    Version = rep(c("Reynolds sample size", "Double sample size"), each=nrow(fst_data))
+  )
+  
+  # Calculate top percentiles
+  percentiles <- fst_data_combined %>%
+    group_by(Version) %>%
+    summarize(
+      p90 = quantile(FST, 0.90),
+      p95 = quantile(FST, 0.95)
+    )
+  
+  # Plot
+  p <- ggplot(fst_data_combined, aes(x=FST, fill=Version)) +
+    geom_density(alpha=0.5) +
+    geom_vline(data=percentiles, aes(xintercept=p90, color=Version, linetype="90th Percentile"), size=1) +
+    geom_vline(data=percentiles, aes(xintercept=p95, color=Version, linetype="95th Percentile"), size=1) +
+    scale_linetype_manual(name = "Percentiles", values = c("90th Percentile" = "dashed", "95th Percentile" = "dotted")) +
+    labs(title=paste("FST Distribution for", chrom_model), x="FST", y="Density") +
+    theme_minimal() +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks = element_line(size = 0.75),       # Add axis ticks
+      axis.ticks.length = unit(0.25, "cm"),         # Adjust tick length
+      axis.line = element_line(size = 0.75, color = "black") # Add axis lines
+    )
+  
+  # Save the plot
+  ggsave(paste0("../data/fst_distribution_", chrom_model, ".png"), plot = p, width=6, height=4, dpi=300)
+  return(p)
+}
+```
