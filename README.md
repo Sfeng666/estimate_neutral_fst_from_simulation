@@ -1,5 +1,5 @@
-# Estimate FST and nucleotide diversity between two populations simulated under neutral demographic models
-This analysis estimate FST and nucleotide diversity between two populations evolved under neutral demographic models from ms simulation. The estimated FST and diversity will serve as a sanity check for the ms simulation, which will be later used as a reference of neutral FST distribution for QST-FST comparison.
+# Estimate window FST and nucleotide diversity between two populations simulated under neutral demographic models
+This analysis estimate window FST and nucleotide diversity between two populations evolved under neutral demographic models from ms simulation. The estimated FST and diversity will serve as a sanity check for the ms simulation, which will be later used as a reference of neutral FST distribution for QST-FST comparison.
 
 ## Output
 * A [summary file](data/estimate_fst_diversity.report) contains mean FST and nucleotide diversity across neutral windows
@@ -9,7 +9,7 @@ This analysis estimate FST and nucleotide diversity between two populations evol
 No input files needed for ms simulation     
 
 ## Method step-by-step
-1. Simulate the genotype data of 100 k independent segments of 5000 bp evolved under neutral demographic models, using ms ([code](code/ms_simulation_window.sh)).
+1. Simulate the genotype data of 100,000 independent windows (i.e. segments) of 5000 bp evolved under neutral demographic models, using ms ([code](code/ms_simulation_window.sh)).
 
     The simulation parameters for ms are mainly borrowed from [da Silva Ribeiro et al 2022](https://doi.org/10.1093/gbe/evac143) ([Supplementary table S2](https://academic.oup.com/gbe/article/14/10/evac143/6713900#supplementary-data)). 
     
@@ -69,7 +69,7 @@ No input files needed for ms simulation
 ## Environment setup
 To set up the environment for this analyses, you could use conda:
 ```
-conda env create -n qst_fst_sim --file ./env/qst_fst_sim.yml
+conda env create -n qst_fst_sim --file env/qst_fst_sim.yml
 ```
 
 If you have not installed conda, run the following command:
