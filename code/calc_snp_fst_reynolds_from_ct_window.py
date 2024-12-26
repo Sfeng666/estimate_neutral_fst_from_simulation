@@ -12,8 +12,12 @@ import optparse
 def Fst_reynolds(p1_afs, p2_afs, size1, size2):
 
     # p1_afs and p2_afs are dicitonaries that include allele frequency spectrum in each population
-    # size 1 and size 2 are allelic samples size of each population (the number of auto/X chromosomes, instead of the number of individuals)
+    # size 1 and size 2 are allelic sample size of each population (the number of auto/X chromosomes, instead of the number of individuals). This is to simplify calculation, especially for the cases of X chromosome when a mixed gender of individuals are sampled.
     # simply implementing the Reynolds's formulation (Reynolds et al, 1983), while the variable names is indicating the location of terms in the formulations.
+
+    # convert the input allelic (haploid) sample size to a individual (diploid) sample size
+    size1 = size1/2
+    size2 = size2/2
 
     # the first term that is shared by both numerator (al) and denominator (al + bl)
     first_term = sum(list((p1_afs[x] - p2_afs[x])**2 for x in p1_afs))/2
