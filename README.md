@@ -63,11 +63,13 @@ No input files needed for ms simulation
     4. Calculate nucleotide diversity of each window (using the actual window size as the demoninator!) as (total heterozygosity across segregating sites)/(window length).
 
     This is done by calling a [python script](code/code/calc_snp_fst_reynolds_from_ct_window.py) from a [shell script](code/code/calc_snp_fst_reynolds_from_ct_window.sh#L4-L22). 
-4. Calculate the mean FST and nucleotide diversity across all windows for sanity check ([code](code/calc_snp_fst_reynolds_from_ct_window.sh#L24-L32)).
+4. Calculate the mean FST and nucleotide diversity across all windows for sanity check ([code](code/calc_snp_fst_reynolds_from_ct_window.sh#L24-L32))
+5. Compare the calculated FST and nucleotide diversity to empirical and simulated results on the same models from [Sprengelmeyer et al 2020](https://doi.org/10.1093/molbev/msz271) (Table S4).
 
 ## Note
 1. As confirmed by a personal communication with one of the authors of [Reynolds et al 1983](https://doi.org/10.1093/genetics/105.3.767), the sample size n1, n2 implemented in the below formula of Reynolds' FST estimator should be diploid individual sample size. A correction is made on this in my most updated [script](code/calc_snp_fst_reynolds_from_ct_window.py#L18-L20). Plug-in haploid sample size as n1 and n2 would lead to a slightly inflated FST (see [a previous result doing that](data/estimate_fst_diversity.report.prev_2xspsize)), when the sample sizes are small (e.g., mean FST inflated by 0.02 when n1=n2=18); the bias become trivial when sample sizes get larger.
      ![formula of Reynolds' FST estimator](code/Reynolds_FST_formula.png "Formula of FST estimator in Reynolds et al 1983")
+2. In addition to window-FST, SNP-FST ([summary table](data/estimate_fst_snp.report)) are also calculated for simulation data (using a [python](code/calc_snp_fst_reynolds_from_ct_snp.py) and [shell](code/calc_snp_fst_reynolds_from_ct_snp.sh) script), so that the simulated FST is more comparable for SNP-FST (cannot do window FST) estimated from empirical data.
 
 ## Environment setup
 To set up the environment for this analyses, you could use conda:

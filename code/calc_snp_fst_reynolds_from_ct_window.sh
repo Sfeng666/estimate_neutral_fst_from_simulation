@@ -25,9 +25,15 @@ for model in "${demo_models[@]}"; do
     mean_fst=$(awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' $out_fst)
     mean_diversity_pop1=$(awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' $out_diversity_pop1)
     mean_diversity_pop2=$(awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' $out_diversity_pop2)
+
+    # calculate the median Fst and diversity across windows
+    median_fst=$(awk '{print $1}' $out_fst | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
+    median_diversity_pop1=$(awk '{print $1}' $out_diversity_pop1 | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
+    median_diversity_pop2=$(awk '{print $1}' $out_diversity_pop2 | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
+
     # print a header to the summary file
     if [ ! -f $summary ]; then
-        echo -e "model\tmean_fst\tmean_diversity_${pop1}\tmean_diversity_${pop2}" > $summary
+        echo -e "model\tmean_fst\tmedian_fst\tmean_diversity_${pop1}\tmedian_diversity_${pop1}\tmean_diversity_${pop2}\tmedian_diversity_${pop2}" > $summary
     fi
-    echo -e "$model\t$mean_fst\t$mean_diversity_pop1\t$mean_diversity_pop2" >> $summary
+    echo -e "$model\t$mean_fst\t$median_fst\t$mean_diversity_pop1\t$median_diversity_pop1\t$mean_diversity_pop2\t$median_diversity_pop2" >> $summary
 done
