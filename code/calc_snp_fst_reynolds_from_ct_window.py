@@ -82,39 +82,39 @@ def calc_win_fst_diversity_from_ct(win_size, win_info, count_table_pop1, count_t
             line_ct_pop2 = line_ct_pop2.strip().split("\t")
             p1_afs = {idx: float(line_ct_pop1[idx])/size1 for idx in range(len(line_ct_pop1))}
             p2_afs = {idx: float(line_ct_pop2[idx])/size2 for idx in range(len(line_ct_pop2))}
+            if not all([(1 - sum(list(x**2 for x in p1_afs.values()))) == 0, (1 - sum(list(x**2 for x in p2_afs.values()))) == 0, p1_afs == p2_afs]):
+                # for FST
+                al, albl = Fst_reynolds(p1_afs, p2_afs, size1, size2)   # calculate the numerator and denominator for per-site FST
+                al_currentwin.append(al)
+                albl_currentwin.append(albl)
 
-            # for FST
-            al, albl = Fst_reynolds(p1_afs, p2_afs, size1, size2)   # calculate the numerator and denominator for per-site FST
-            al_currentwin.append(al)
-            albl_currentwin.append(albl)
+                # for heterozygosity
+                p1_heterozygosity = calc_heterozygosity(p1_afs)
+                p2_heterozygosity = calc_heterozygosity(p2_afs)
+                p1_heterozygosity_currentwin.append(p1_heterozygosity)
+                p2_heterozygosity_currentwin.append(p2_heterozygosity)
 
-            # for heterozygosity
-            p1_heterozygosity = calc_heterozygosity(p1_afs)
-            p2_heterozygosity = calc_heterozygosity(p2_afs)
-            p1_heterozygosity_currentwin.append(p1_heterozygosity)
-            p2_heterozygosity_currentwin.append(p2_heterozygosity)
+                num_segsites_calculated += 1
+                if num_segsites_calculated == num_segsites_currentwin:
+                    # calculate window FST as the weighted average of al and al + bl within the current window
+                    fst_currentwin = sum(al_currentwin)/sum(albl_currentwin)
+                    f_out_fst.write(f"{fst_currentwin}\n")
+                    al_currentwin = []  # reset the list of al for the next window
+                    albl_currentwin = []    # reset the list of al + bl for the next window
 
-            num_segsites_calculated += 1
-            if num_segsites_calculated == num_segsites_currentwin:
-                # calculate window FST as the weighted average of al and al + bl within the current window
-                fst_currentwin = sum(al_currentwin)/sum(albl_currentwin)
-                f_out_fst.write(f"{fst_currentwin}\n")
-                al_currentwin = []  # reset the list of al for the next window
-                albl_currentwin = []    # reset the list of al + bl for the next window
+                    # calculate nucleotide diversity of the current window for each population
+                    diversity_currentwin_pop1 = sum(p1_heterozygosity_currentwin)/int(win_size)
+                    diversity_currentwin_pop2 = sum(p2_heterozygosity_currentwin)/int(win_size)
+                    f_out_diversity_pop1.write(f"{diversity_currentwin_pop1}\n")
+                    f_out_diversity_pop2.write(f"{diversity_currentwin_pop2}\n")
+                    p1_heterozygosity_currentwin = []  # reset the list of heterozygosity for the next window
+                    p2_heterozygosity_currentwin = []  # reset the list of heterozygosity for the next window
 
-                # calculate nucleotide diversity of the current window for each population
-                diversity_currentwin_pop1 = sum(p1_heterozygosity_currentwin)/int(win_size)
-                diversity_currentwin_pop2 = sum(p2_heterozygosity_currentwin)/int(win_size)
-                f_out_diversity_pop1.write(f"{diversity_currentwin_pop1}\n")
-                f_out_diversity_pop2.write(f"{diversity_currentwin_pop2}\n")
-                p1_heterozygosity_currentwin = []  # reset the list of heterozygosity for the next window
-                p2_heterozygosity_currentwin = []  # reset the list of heterozygosity for the next window
-
-                # move to the next window, if there is any
-                if current_win < len(num_segsites_allwins) - 1:
-                    current_win += 1
-                    num_segsites_currentwin = num_segsites_allwins[current_win]
-                    num_segsites_calculated = 0
+                    # move to the next window, if there is any
+                    if current_win < len(num_segsites_allwins) - 1:
+                        current_win += 1
+                        num_segsites_currentwin = num_segsites_allwins[current_win]
+                        num_segsites_calculated = 0
 
 def main():
     usage = "usage: %prog [options] args"

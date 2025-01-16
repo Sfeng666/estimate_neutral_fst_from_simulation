@@ -70,6 +70,8 @@ No input files needed for ms simulation
 1. As confirmed by a personal communication with one of the authors of [Reynolds et al 1983](https://doi.org/10.1093/genetics/105.3.767), the sample size n1, n2 implemented in the below formula of Reynolds' FST estimator should be diploid individual sample size. A correction is made on this in my most updated [script](code/calc_snp_fst_reynolds_from_ct_window.py#L18-L20). Plug-in haploid sample size as n1 and n2 would lead to a slightly inflated FST (see [a previous result doing that](data/estimate_fst_diversity.report.prev_2xspsize)), when the sample sizes are small (e.g., mean FST inflated by 0.02 when n1=n2=18); the bias become trivial when sample sizes get larger.
      ![formula of Reynolds' FST estimator](code/Reynolds_FST_formula.png "Formula of FST estimator in Reynolds et al 1983")
 2. In addition to window-FST, SNP-FST ([summary table](data/estimate_fst_snp.report)) are also calculated for simulation data (using a [python](code/calc_snp_fst_reynolds_from_ct_snp.py) and [shell](code/calc_snp_fst_reynolds_from_ct_snp.sh) script), so that the simulated FST is more comparable for SNP-FST (cannot do window FST) estimated from empirical data.
+3. In calculation of FST, we assumed that the ancestral and derived allele in population 1 and 2 are the same alleles. 
+
 
 ## Environment setup
 To set up the environment for this analyses, you could use conda:

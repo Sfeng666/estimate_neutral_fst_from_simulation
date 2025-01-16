@@ -9,21 +9,16 @@ library(ggplot2)
 library(dplyr)
 ```
 
-# 1. define a function to plot FST distribution
+# 1. define a function to plot distribution of per-site minor af per population
 ```{r}
-plot_fst_distribution <- function(chrom_model) {
+plot_afs_distribution <- function(pop, chrom) {
   # Load data
-  fst_file <- paste0("../data/fst_", chrom_model, ".txt")
-  fst_snp_file <- paste0("../data/fst_", chrom_model, "_snp.txt")
+  fst_file <- paste0("../data/afs_", pop, "_", chrom, ".txt")
   
   fst_data <- read.table(fst_file, header = FALSE)
-  fst_snp_data <- read.table(fst_snp_file, header = FALSE)
   
-  # Combine data into a single data frame
-  fst_data_combined <- rbind(
-    data.frame(FST = fst_data$V1, Version = "Window FST"),
-    data.frame(FST = fst_snp_data$V1, Version = "SNP FST")
-  )
+# Combine data into a single data frame
+  fst_data_combined <- data.frame(FST = fst_data$V1, Version = "minor allele frequency")
   
   # Calculate top percentiles
   percentiles <- fst_data_combined %>%
@@ -39,7 +34,7 @@ plot_fst_distribution <- function(chrom_model) {
     geom_vline(data = percentiles, aes(xintercept = p90, color = Version, linetype = "90th Percentile"), size = 1) +
     geom_vline(data = percentiles, aes(xintercept = p95, color = Version, linetype = "95th Percentile"), size = 1) +
     scale_linetype_manual(name = "Percentiles", values = c("90th Percentile" = "dashed", "95th Percentile" = "dotted")) +
-    labs(title = paste("FST Distribution for", chrom_model), x = "FST", y = "Density") +
+    labs(title = paste("MAF Distribution for", chrom), x = "MAF", y = "Density") +
     theme_minimal() +
     scale_x_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
     scale_y_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
@@ -52,23 +47,22 @@ plot_fst_distribution <- function(chrom_model) {
       panel.background = element_rect(fill = "white", color = NA), # White background
       plot.background = element_rect(fill = "white", color = NA)   # White background
     )
-
   # Save the plot
-  ggsave(paste0("../data/fst_distribution_", chrom_model, "_simulated.png"), plot = p, width = 6, height = 4, dpi = 300)
+  ggsave(paste0("../data/MAF_distribution_", pop, "_", chrom, "_simulated.png"), plot = p, width = 6, height = 4, dpi = 300)
   return(p)
 }
 ```
 
-# 2. plot FST distribution
+
+# 2. plot AFS distribution
 ```{r}
-# Plot for Chromosome X
-plot_fst_distribution("chrX_6_pop")
-# plot_fst_distribution("chrX_6_pop_sp2500sites")
-# plot_fst_distribution("chrX_6_pop_sp1400sites")
+pops <- c('ZI', 'FR')
+chroms <- c('chrX_6_pop', 'chr2R_5_pop', 'chr3L_6_pop')
 
-# Plot for Chromosome 2R
-plot_fst_distribution("chr2R_5_pop")
 
-# Plot for Chromosome 3L
-plot_fst_distribution("chr3L_6_pop")
+for (pop in pops) {
+  for (chrom in chroms) {
+    plot_afs_distribution(pop, chrom)
+  }
+}
 ```

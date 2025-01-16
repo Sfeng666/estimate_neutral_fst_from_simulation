@@ -44,6 +44,10 @@ def Fst_reynolds(p1_afs, p2_afs, size1, size2):
     except:
         snp_fst = 0 # for sites without variation in empirical data, the denominator is 0, so the Fst is set to 0
         print(p1_afs, p2_afs, al, albl)
+    # mannually correct non-zero FST due to floating-point precision issues to 0
+    if abs(snp_fst) < 1e-10:
+        snp_fst = 0
+                
     return snp_fst
 
     # # seperately return al and al + bl for Fst calculation (weighted average of sites within windows)

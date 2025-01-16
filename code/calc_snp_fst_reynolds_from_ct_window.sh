@@ -28,8 +28,8 @@ for model in "${demo_models[@]}"; do
 
     # calculate the median Fst and diversity across windows
     median_fst=$(awk '{print $1}' $out_fst | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
-    median_diversity_pop1=$(awk '{print $1}' $out_diversity_pop1 | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
-    median_diversity_pop2=$(awk '{print $1}' $out_diversity_pop2 | sort -n | awk ' { a[i++]=$1; } END { x=int((i+1)/2); if (x < (i+1)/2) print (a[x-1]+a[x])/2; else print a[x-1]; }')
+    median_diversity_pop1=$(awk '{print $1}' $out_diversity_pop1 | sort -g | awk ' { a[i++]=$1; } END { if (i % 2 == 0) print (a[i/2-1] + a[i/2]) / 2; else print a[int(i/2)]; }')
+    median_diversity_pop2=$(awk '{print $1}' $out_diversity_pop2 | sort -g | awk ' { a[i++]=$1; } END { if (i % 2 == 0) print (a[i/2-1] + a[i/2]) / 2; else print a[int(i/2)]; }')
 
     # print a header to the summary file
     if [ ! -f $summary ]; then
