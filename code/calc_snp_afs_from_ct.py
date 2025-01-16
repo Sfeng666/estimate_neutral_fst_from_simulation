@@ -25,8 +25,8 @@ def calc_minor_af_from_ct(count_table_pop1, count_table_pop2, out_afs_pop1, out_
                 minor_af_pop1 = min(p1_afs[minor_af_idx], 1 - p1_afs[minor_af_idx])  # since the minor allele across populations may not be the minor allele of each population, we take the smaller one of top two allele frequencies as MAF per population
                 minor_af_pop2 = min(p2_afs[minor_af_idx], 1 - p2_afs[minor_af_idx])
 
-                f_out_afs_pop1.write(f"{minor_af_pop1}\n")
-                f_out_afs_pop2.write(f"{minor_af_pop2}\n")  
+                f_out_afs_pop1.write(f"{minor_af_pop1:.6f}\n")
+                f_out_afs_pop2.write(f"{minor_af_pop2:.6f}\n")  
 
 def main():
     usage = "usage: %prog [options] args"

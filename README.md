@@ -71,7 +71,11 @@ No input files needed for ms simulation
      ![formula of Reynolds' FST estimator](code/Reynolds_FST_formula.png "Formula of FST estimator in Reynolds et al 1983")
 2. In addition to window-FST, SNP-FST ([summary table](data/estimate_fst_snp.report)) are also calculated for simulation data (using a [python](code/calc_snp_fst_reynolds_from_ct_snp.py) and [shell](code/calc_snp_fst_reynolds_from_ct_snp.sh) script), so that the simulated FST is more comparable for SNP-FST (cannot do window FST) estimated from empirical data.
 3. In calculation of FST, we assumed that the ancestral and derived allele in population 1 and 2 are the same alleles. 
-
+4. Be careful about bandwidth used for plotting distribution! The default bandwidth of the distribution-plotting function ggplot2::geom_density() is <u>heuristically determined</u> as a function of: (1) standard deviation of the data, (2) interquartile range of the data, and (3) number of data points. 
+    * Default calculation of bw:  $\text{bw} = 0.9 \times \min(\text{sd}, \text{IQR}/1.34) \times n^{-1/5}$
+    * Since chromosome arms do differ in number of sites and standard deviation (of MAF and/or FST), the default bandwidth used is different across input data. 
+    * Specifically, a wider band width has over-smoothed distribution of chromosomes with less empirical sites (e.g., chrX) compared to chromosomes with more empirical sites (e.g., chr2R, chr3L) or much more (~4 magnitudes higher) simulated sites.
+    * For a fair comparison across distributions, I now use a fixed bandwidth bw = 0.01 across all FST distributions.
 
 ## Environment setup
 To set up the environment for this analyses, you could use conda:

@@ -47,7 +47,7 @@ def Fst_reynolds(p1_afs, p2_afs, size1, size2):
     # mannually correct non-zero FST due to floating-point precision issues to 0
     if abs(snp_fst) < 1e-10:
         snp_fst = 0
-                
+
     return snp_fst
 
     # # seperately return al and al + bl for Fst calculation (weighted average of sites within windows)
@@ -74,7 +74,7 @@ def calc_snp_fst_reynolds_from_ct(count_table_pop1, count_table_pop2, out_fst):
             if not all([(1 - sum(list(x**2 for x in p1_afs.values()))) == 0, (1 - sum(list(x**2 for x in p2_afs.values()))) == 0, p1_afs == p2_afs]):
             # if p1_afs != p2_afs:    # skip sites without variation
                 snp_fst = Fst_reynolds(p1_afs, p2_afs, size1, size2)
-                f_out_fst.write(f"{snp_fst}\n")
+                f_out_fst.write(f"{snp_fst:.6f}\n") # round to 6 decimal places, so that inconsistent FST (difference < 1e-10) on the same afs due to floating-point precision issues are avoided.
 
 def main():
     usage = "usage: %prog [options] args"
