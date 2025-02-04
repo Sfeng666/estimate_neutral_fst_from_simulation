@@ -65,7 +65,7 @@ No input files needed for ms simulation
     This is done by calling a [python script](code/code/calc_snp_fst_reynolds_from_ct_window.py) from a [shell script](code/code/calc_snp_fst_reynolds_from_ct_window.sh#L4-L22). 
 4. Calculate the mean FST and nucleotide diversity across all windows for sanity check ([code](code/calc_snp_fst_reynolds_from_ct_window.sh#L24-L32))
 5. (optional & follow-up) Compare the calculated FST and nucleotide diversity to empirical and simulated results on the same models from [Sprengelmeyer et al 2020](https://doi.org/10.1093/molbev/msz271) (Table S4).
-6. (optional & follow-up) Plot the distribution of window- and SNP-FST ([example](data/fst_distribution_chrX_6_pop_simulated.png)) with 95% and 90% percentiles calculated, and subsample 1000 SNPs from the lower 95% of SNP-FST distribution for following power analysis of QST estimation ([code](code/plot_fst_distribution.Rmd)).
+6. (optional & follow-up) Plot the distribution of window- and SNP-FST ([example output](data/fst_distribution_chrX_6_pop_simulated.png)) with 95% and 90% percentiles calculated, and subsample 1000 SNPs from the lower 95% of SNP-FST distribution ([example output](data/fst_percentiles_chr3L_6_pop.txt)) for following power analysis of QST estimation ([code](code/plot_fst_distribution.Rmd)).
     * be aware that the subsampled 'neutral' QST can be adaptive, too
 
 ## Note
