@@ -12,6 +12,9 @@ library(dplyr)
 # 1. define a function to plot FST distribution
 ```{r}
 plot_fst_distribution <- function(chrom_model) {
+  # # for test only
+  # chrom_model <- "chrX_6_pop"
+
   # Load data
   fst_file <- paste0("../data/fst_", chrom_model, ".txt")
   fst_snp_file <- paste0("../data/fst_", chrom_model, "_snp.txt")
@@ -32,6 +35,45 @@ plot_fst_distribution <- function(chrom_model) {
       p90 = quantile(FST, 0.90),
       p95 = quantile(FST, 0.95)
     )
+
+  # Output the top percentiles (remove quotes)
+  write.table(percentiles, file = paste0("../data/fst_percentiles_", chrom_model, ".txt"), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
+
+  # Calculate the ECDF for the SNP-FST values below the 95% quantile
+  fst_values <- fst_snp_data$V1[fst_snp_data$V1 < percentiles$p95[2]]
+  ecdf_fst <- ecdf(fst_values)
+
+  # Calculate the sampling probabilities based on the ECDF
+  probabilities <- ecdf_fst(fst_values)
+
+  # Normalize the probabilities to sum to 1
+  probabilities <- probabilities / sum(probabilities)
+
+  # Sample 1000 points with the specified probabilities
+  qst_neutral <- sample(fst_values, 1000, prob = probabilities, replace = TRUE)
+
+  # output the sampled QST values
+  write.table(qst_neutral, file = paste0("../data/qst_neutral_sp1000_", chrom_model, ".txt"), row.names = FALSE, col.names = FALSE)
+
+  # plot the distribution of the sampled QST values as a sanity check
+  p <- ggplot() +
+    geom_density(data = data.frame(FST = qst_neutral), aes(x = FST), fill = "blue", alpha = 0.5, bw = 0.01) +
+    labs(title = paste("Distribution of subsampled neutral FST (QST)", chrom_model), x = "QST", y = "Density") +
+    theme(plot.title = element_text(size = 5)) +
+    theme_minimal() +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10), expand = c(0, 0)) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks = element_line(size = 0.75),       # Add axis ticks
+      axis.ticks.length = unit(0.25, "cm"),         # Adjust tick length
+      axis.line = element_line(size = 0.75, color = "black"), # Add axis lines
+      panel.background = element_rect(fill = "white", color = NA), # White background
+      plot.background = element_rect(fill = "white", color = NA)   # White background
+    )
+  ggsave(paste0("../data/fst_distribution_", chrom_model, "_simulated_sp1000.png"), plot = p, width = 6, height = 4, dpi = 300)
+
   
   # Plot
   p <- ggplot(fst_data_combined, aes(x = FST, fill = Version)) +
@@ -75,4 +117,5 @@ plot_fst_distribution("chr2R_5_pop")
 
 # Plot for Chromosome 3L
 plot_fst_distribution("chr3L_6_pop")
+
 ```
