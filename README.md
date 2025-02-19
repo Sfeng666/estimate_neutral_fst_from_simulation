@@ -65,7 +65,7 @@ No input files needed for ms simulation
     This is done by calling a [python script](code/code/calc_snp_fst_reynolds_from_ct_window.py) from a [shell script](code/code/calc_snp_fst_reynolds_from_ct_window.sh#L4-L22). 
 4. Calculate the mean FST and nucleotide diversity across all windows for sanity check ([code](code/calc_snp_fst_reynolds_from_ct_window.sh#L24-L32))
 5. (optional & follow-up) Compare the calculated FST and nucleotide diversity to empirical and simulated results on the same models from [Sprengelmeyer et al 2020](https://doi.org/10.1093/molbev/msz271) (Table S4).
-6. (optional & follow-up) Plot the distribution of window- and SNP-FST ([example output](data/fst_distribution_chrX_6_pop_simulated.png)) with 95% and 90% percentiles calculated, and subsample 1000 SNPs from the lower 95% of SNP-FST distribution ([example output](data/fst_percentiles_chr3L_6_pop.txt)) for following power analysis of QST estimation ([code](code/plot_fst_distribution.Rmd)).
+6. (optional & follow-up) Plot the distribution of window- and SNP-FST ([example output](data/fst_distribution_chrX_6_pop_simulated.png)) with 95% and 90% percentiles calculated, and subsample 1000 SNPs from the lower 95% of SNP-FST distribution ([example output](data/qst_neutral_sp1000_chr3L_6_pop.txt)) or the full SNP-FST distribution ([example output](data/qst_neutral_sp1000_chr3L_6_pop_fulldist.txt)) for following power analysis of QST estimation ([code](code/plot_fst_distribution.Rmd)).
     * be aware that the subsampled 'neutral' QST can be adaptive, too
 
 ## Note
@@ -78,8 +78,8 @@ No input files needed for ms simulation
     * Since chromosome arms do differ in number of sites and standard deviation (of MAF and/or FST), the default bandwidth used is different across input data. 
     * Specifically, a wider band width has over-smoothed distribution of chromosomes with less empirical sites (e.g., chrX) compared to chromosomes with more empirical sites (e.g., chr2R, chr3L) or much more (~4 magnitudes higher) simulated sites.
     * For a fair comparison across distributions, I now use a fixed bandwidth bw = 0.01 across all FST distributions.
-5. It's hard to justify for exclude the singleton SNPs that has Reynolds & Weir' FST of 0.
-    * possible to substract a number of singleton SNPs based on sequencing error rate (1.36*e-5 * number of genomes). Although that may not contribute significantly to the huge proportion of singletons we currently have.
+5. By definitions of Reynolds & Weir' FST,  the FST will be estimated as 0 when there is only one mutation in both populations and when the population sizes equal. This is totally normal, and there is no need to do anything.
+    * It's possible to substract a number of singleton SNPs based on sequencing error rate (1.36*e-5 * number of genomes). Although that may not contribute significantly to the huge proportion of singletons we currently have.
 
 ## Environment setup
 To set up the environment for this analyses, you could use conda:

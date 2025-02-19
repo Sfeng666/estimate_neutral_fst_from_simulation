@@ -12,7 +12,7 @@ library(dplyr)
 # 1. define a function to plot FST distribution
 ```{r}
 plot_fst_distribution <- function(chrom_model) {
-  # # for test only
+  # # for test oR
   # chrom_model <- "chrX_6_pop"
 
   # Load data
@@ -39,21 +39,40 @@ plot_fst_distribution <- function(chrom_model) {
   # Output the top percentiles (remove quotes)
   write.table(percentiles, file = paste0("../data/fst_percentiles_", chrom_model, ".txt"), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
 
-  # Calculate the ECDF for the SNP-FST values below the 95% quantile
+  # sample 1000 QST values from the distribution of SNP-FST values below the 95th percentile
+  ## Calculate the ECDF for the SNP-FST values below the 95% quantile
   fst_values <- fst_snp_data$V1[fst_snp_data$V1 < percentiles$p95[2]]
   ecdf_fst <- ecdf(fst_values)
 
-  # Calculate the sampling probabilities based on the ECDF
+  ## Calculate the sampling probabilities based on the ECDF
   probabilities <- ecdf_fst(fst_values)
 
-  # Normalize the probabilities to sum to 1
+  ## Normalize the probabilities to sum to 1
   probabilities <- probabilities / sum(probabilities)
 
-  # Sample 1000 points with the specified probabilities
+  ## Sample 1000 points with the specified probabilities
   qst_neutral <- sample(fst_values, 1000, prob = probabilities, replace = TRUE)
 
-  # output the sampled QST values
+  ## output the sampled QST values
   write.table(qst_neutral, file = paste0("../data/qst_neutral_sp1000_", chrom_model, ".txt"), row.names = FALSE, col.names = FALSE)
+
+  # sample 1000 QST values from the distribution of SNP-FST values across the whole FST distribution
+  ## Calculate the ECDF for the SNP-FST values across the full distribution
+  fst_values <- fst_snp_data$V1
+  ecdf_fst <- ecdf(fst_values)
+
+  ## Calculate the sampling probabilities based on the ECDF
+  probabilities <- ecdf_fst(fst_values)
+
+  ## Normalize the probabilities to sum to 1
+  probabilities <- probabilities / sum(probabilities)
+
+  ## Sample 1000 points with the specified probabilities
+  qst_neutral <- sample(fst_values, 1000, prob = probabilities, replace = TRUE)
+
+  ## output the sampled QST values
+  write.table(qst_neutral, file = paste0("../data/qst_neutral_sp1000_", chrom_model, "_fulldist.txt"), row.names = FALSE, col.names = FALSE)
+
 
   # plot the distribution of the sampled QST values as a sanity check
   p <- ggplot() +
